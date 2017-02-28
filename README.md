@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/naturalis/docker-nba-ml-mimetype.svg?branch=master)](https://travis-ci.org/naturalis/docker-nba-ml-mimetype)
+
 # docker-nba-ml-mimetype
 Mimetype generator for NBA etl module.
 
