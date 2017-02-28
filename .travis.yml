@@ -6,6 +6,8 @@ services:
 before_install:
   - docker pull mysql:5
   - docker run --name mysql -v $(pwd)/test:/sql -e MYSQL_ROOT_PASSWORD=password -d mysql:5
+  - echo 'waiting for mysql to be up'
+  - sleep 15
   - docker exec mysql sh -c 'mysql -ppassword -e "create database medialibrary;"'
   - docker exec mysql sh -c 'mysql -ppassword medialibrary < /sql/dump.sql'
   - mkdir temp
