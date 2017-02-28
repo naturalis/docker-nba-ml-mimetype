@@ -1,0 +1,26 @@
+language: shell
+
+services:
+  - docker
+
+before_install:
+  - export PWD=$(pwd)
+  - docker run --name mysql -v $(pwd)/test:/sql -e MYSQL_ROOT_PASSWORD=password -d mysql:5
+  - docker exec mysql sh -c 'mysql -ppassword -e "create database medialibrary;"'
+  - docker exec mysql sh -c 'mysql -ppassword medialibrary < /sql/dump.sql'
+  - mkdir temp
+
+before_script:
+  - docker exec mysql sh -c 'mysql -ppassword medialibrary -e "select * from media;"'
+
+script:
+  - docker build -t atzedevries/docker-nba-ml-mimetype ./
+  - docker run --rm --link mysql:mysql -e DB_HOST=mysql -e DB_USER=root -e DB_PASS=password -v $(pwd)/temp/:/payload atzedevries/docker-nba-ml-mimetype
+  - unzip temp/mimetype_cache.zip
+  - diff test/mimetype.txt temp/mimetype.txt
+
+after_success:
+  - docker login -u atzedevries -p $DOCKER_PASS
+  - docker tag atzedevries/docker-nba-ml-mimetype atzedevries/docker-nba-ml-mimetype
+  - docker push atzedevries/docker-nba-ml-mimetype
+  - docker logout
