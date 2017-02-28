@@ -4,7 +4,6 @@ services:
   - docker
 
 before_install:
-  - export PWD=$(pwd)
   - docker run --name mysql -v $(pwd)/test:/sql -e MYSQL_ROOT_PASSWORD=password -d mysql:5
   - docker exec mysql sh -c 'mysql -ppassword -e "create database medialibrary;"'
   - docker exec mysql sh -c 'mysql -ppassword medialibrary < /sql/dump.sql'
