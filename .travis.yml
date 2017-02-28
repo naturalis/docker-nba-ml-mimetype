@@ -13,13 +13,14 @@ before_install:
   - mkdir temp
 
 before_script:
+  - docker ps
   - docker exec mysql sh -c 'mysql -ppassword medialibrary -e "select * from media;"'
 
 script:
   - docker build -t atzedevries/docker-nba-ml-mimetype ./
   - docker run --rm --link mysql:mysql -e DB_HOST=mysql -e DB_USER=root -e DB_PASS=password -v $(pwd)/temp/:/payload atzedevries/docker-nba-ml-mimetype
   - unzip temp/mimetype_cache.zip
-  - diff test/mimetype.txt temp/mimetype.txt
+  - diff test/mimetype.txt mimetype.txt
 
 after_success:
   - docker login -u atzedevries -p $DOCKER_PASS
